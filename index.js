@@ -21,7 +21,7 @@ require("./Models/UrlCheck");
 require("./Models/Tag");
 // Routes
 app.use(require("./Routes/authRoutes"));
-
+app.use(require("./Routes/URLMangementRoutes"));
 // Database Connection
 mongoose.connect(MONGOURI, {
   useNewUrlParser: true,
