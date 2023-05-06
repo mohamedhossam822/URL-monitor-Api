@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const URLMangementController = require('../Controllers/URLMangementController');
-const { Authenticate } = require('../Middlewares/AuthMiddleware');
-router.get("/GetURLDetails/:checkName",Authenticate,URLMangementController.GetURLDetails);
-router.post("/Add",Authenticate,URLMangementController.Add);
-router.put("/Update/:checkName",Authenticate,URLMangementController.Update)
-router.delete("/Delete/:checkName",Authenticate,URLMangementController.Delete)
+const { authenticate } = require('../Middlewares/AuthMiddleware');
+router.get("/GetURLDetails/:checkName",authenticate,URLMangementController.getURLDetails);
+router.post("/Add",authenticate,URLMangementController.addURLCheck);
+router.put("/Update/",authenticate,URLMangementController.updateURLCheck)
+router.delete("/Delete/:checkName",authenticate,URLMangementController.deleteURLCheck)
 
-router.get("/GetURLDetailsByTag/:tagName",Authenticate,URLMangementController.GetURLDetailsByTag);
-router.post("/AddTagsWithCheckNames",Authenticate,URLMangementController.AddTagsWithCheckNames);
+router.get("/GetURLDetailsByTag/:tagName",authenticate,URLMangementController.getURLDetailsByTag);
+router.post("/AddTagsWithCheckNames",authenticate,URLMangementController.addTagsWithCheckNames);
 
 module.exports = router;

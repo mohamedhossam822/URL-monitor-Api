@@ -20,7 +20,7 @@ const urlCheckSchema = new mongoose.Schema({
         message: '{VALUE} is not supported, Use HTTP or HTTPS or TCP'
       }
     },
-    path: {},
+    path: String,
     port: Number,
     webhook: String,
     timeout : {type: Number,default: 5},
@@ -37,7 +37,7 @@ const urlCheckSchema = new mongoose.Schema({
       type: Boolean,
       validate: {
         validator: function(v) {
-          return this.protocol != 'HTTPS' || v === false || v==true;
+          return this.protocol !== 'HTTPS' || v === false || v==true;
         },
         message: props => `${props.value} is not a email!`
       },
