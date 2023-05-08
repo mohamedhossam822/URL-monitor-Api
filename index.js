@@ -43,7 +43,7 @@ mongoose.connection.on("error", (err) => {
 
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.listen(port, async () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`URL Monitor app listening on port ${port}`)
   const UrlCheck = mongoose.model("UrlCheck");
   const savedUrls= await UrlCheck.find({});
   for(let i=0;i<savedUrls.length;i++){
