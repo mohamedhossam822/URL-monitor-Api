@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const validator = require("email-validator");
-const jwt = require("jsonwebtoken");
+import mongoose from "mongoose";
+import * as validator from "email-validator";
+import * as  jwt from "jsonwebtoken";
 const User = mongoose.model("User");
 
 
@@ -22,6 +22,6 @@ const maxAge = 24 * 60 * 60; //hours*min*secs //1 Day
   };
   /************************/
 
-  module.exports = {
+  export  {
     VerifyUser
 };

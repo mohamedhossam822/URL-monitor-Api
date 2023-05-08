@@ -1,27 +1,30 @@
-require('dotenv').config();
-const express = require('express')
-const mongoose = require('mongoose');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./Swagger/swagger.json');
-//const swaggerDocument = require('./Swagger/SwaggerDocument.ts');
-//const bodyParser = require("body-parser");
-//const cors = require("cors");
+import dotenv from 'dotenv'
+import express from 'express';
+import mongoose from 'mongoose';
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./Swagger/swagger.json" assert { type: "json" };
+import { Worker } from 'worker_threads';
+
+dotenv.config()
+process.env.UV_THREADPOOL_SIZE = 128;
 const app = express()
 const port = process.env.PORT; 
 const  MONGOURI  = process.env.MOGOURI;
 
-//app.use(cors());
-//app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 
 // Models
-require("./Models/User");
-require("./Models/UrlCheck");
-require("./Models/Tag");
+import "./Models/User.js";
+import "./Models/UrlCheck.js";
+import "./Models/Tag.js";
+
 // Routes
-app.use(require("./Routes/authRoutes"));
-app.use(require("./Routes/URLMangementRoutes"));
+import {router as authRoutes} from"./Routes/authRoutes.js" ;
+import {router as URLMangementRoutes} from"./Routes/URLMangementRoutes.js" ;
+app.use(authRoutes);
+app.use(URLMangementRoutes);
+import {makeARequest} from"./URLMonitoring.js";
 // Database Connection
 mongoose.connect(MONGOURI, {
   useNewUrlParser: true,
@@ -30,17 +33,20 @@ mongoose.connect(MONGOURI, {
 
 mongoose.connection.on("connected", () => {
   console.log("connected to mongo");
+
+
 });
 
 mongoose.connection.on("error", (err) => {
   console.log("error connecting to mongo", err);
 });
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.listen(port, () => {
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.listen(port, async () => {
   console.log(`Example app listening on port ${port}`)
+  const UrlCheck = mongoose.model("UrlCheck");
+  const savedUrls= await UrlCheck.find({});
+  for(let i=0;i<savedUrls.length;i++){
+    makeARequest(savedUrls[i]);
+  }
 })

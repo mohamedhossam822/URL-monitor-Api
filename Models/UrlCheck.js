@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const urlCheckSchema = new mongoose.Schema({
     name: 
     {
@@ -46,7 +46,16 @@ const urlCheckSchema = new mongoose.Schema({
       //populate('user')
       type: mongoose.ObjectId,
       ref: "User"
-    }
+    },
+    status: {type: Boolean, default: true},
+    outages: {type:Number, default: 0},
+    downtime: {type:Number, default: 0},
+    upTime: {type:Number, default: 0},
+    avgResponseTime: {type:Number, default: 0},
+    totalPings:{type: Number, default: 0},
+    history: [],
+    lastTimeStampMs: {type:Number ,default: Date.now()},
+    availability: {type:String,default:""}
   });
   
   mongoose.model("UrlCheck", urlCheckSchema);

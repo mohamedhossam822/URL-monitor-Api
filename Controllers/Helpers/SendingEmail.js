@@ -1,6 +1,7 @@
-const nodemailer = require("nodemailer");
-var handlebars = require('handlebars');
-var fs = require('fs');
+import * as  nodemailer from "nodemailer";
+import pkg from 'handlebars';
+const {compile} = pkg;
+import * as fs from 'fs';
 
   /*Send Mail*/
   async function  sendMail(email,fullUrl){
@@ -18,7 +19,7 @@ var fs = require('fs');
            console.log('error reading file', err);
            return;
         }
-        var template = handlebars.compile(html);
+        var template = compile(html);
         var replacements = {
              link: fullUrl
         };
@@ -38,6 +39,48 @@ var fs = require('fs');
     });
 
   }
+  async function  sendNotification(email,status,urlCheckName,constructedURL){
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+      service : "Mail.ru",
+      auth: {
+        user: process.env.SENDEREMAIL, 
+        pass: process.env.SENDERPASS, 
+      },
+    });
+    let fileLink="Red";
+    console.log(status);
+    if(status) fileLink="Green";
+    console.log(fileLink);
+    await readHTMLFile('./HTMLFiles/UrlStatus'+fileLink+'.html', async function(err, html) {
+        if (err) {
+           console.log('error reading file', err);
+           return;
+        }
+        const curStatus = status ? "up" : "down"
+        console.log(curStatus);
+        var template = compile(html);
+        var replacements = {
+          checkName: urlCheckName,
+          status: curStatus,
+          url: constructedURL,
+        };
+        var htmlToSend = template(replacements);
+        var mailOptions = {
+          from: process.env.SENDEREMAIL, // sender address
+          to: email, // list of receivers
+          subject: "Update about your Url Check "+ urlCheckName, // Subject line
+          text: "Your Url '"+constructedURL+ "' Went"+status
+          , html : htmlToSend
+       };
+      await transporter.sendMail(mailOptions, function (error, response) {
+          if (error) {
+              console.log(error);
+          }
+      });
+    });
+
+  }
 
   /** Read html*/
   var readHTMLFile = function(path, callback) {
@@ -51,6 +94,4 @@ var fs = require('fs');
     });
 };
 
-module.exports = {
-    sendMail
-};
+ export { sendMail,sendNotification }

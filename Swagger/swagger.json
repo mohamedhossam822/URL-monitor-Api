@@ -1,0 +1,880 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "URL Monitoring API",
+    "description": "A URL Monitoring api where the user can signup,login  add URLs to monitor,\ngroup them by tags and get the results of their Check urls by name or tag name\n\n\nSource Code : [The Github Repository](https://github.com/mohamedhossam822/URL-monitor-Api)",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Everything about authenticating users."
+    },
+    {
+      "name": "URLMangement",
+      "description": "Everything about authenticating users."
+    }
+  ],
+  "paths": {
+    "/Signup": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Sign users to the server, the user should receive an email to verify their email,user won't be able to log in if they don't verify their accounts.",
+        "requestBody": {
+          "description": "Email must be in valid email format & passwordmust be 8 characters long",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "default": "a@b.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "default": "12345678",
+                    "minLength": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Saved Successfully, Please Verify your email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Please Enter a valid email/ password must be at least 8 characters long/ -User already exists with that email"
+          }
+        }
+      }
+    },
+    "/Login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "sign in users , users must be verified to be able to login",
+        "requestBody": {
+          "description": "Email must be in valid email format & verified & passwordmust be 8 characters long",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "default": "a@b.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "default": "12345678",
+                    "minLength": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Logged in successfully!"
+                    },
+                    "token": {
+                      "type": "string",
+                      "default": "abcdefghijklmnopqrstuvwxyz"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Email or password are invalid!"
+          },
+          "432": {
+            "description": "Please Verify your email"
+          }
+        }
+      }
+    },
+    "/GetURLDetails/{checkName}": {
+      "get": {
+        "tags": [
+          "URLMangement"
+        ],
+        "summary": "Get URL Data and monitoring results",
+        "parameters": [
+          {
+            "name": "checkName",
+            "in": "path",
+            "description": "Check Url Name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authtoken",
+            "in": "header",
+            "description": "auth token that the user got from login post request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "protocol": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "integer"
+                    },
+                    "timeout": {
+                      "type": "integer",
+                      "default": 5
+                    },
+                    "interval": {
+                      "type": "integer",
+                      "default": 10
+                    },
+                    "threshold": {
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "authentication": {
+                      "type": "object",
+                      "properties": {
+                        "username": {
+                          "type": "string"
+                        },
+                        "password": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "httpHeaders": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "assert": {
+                      "type": "object",
+                      "properties": {
+                        "statusCode": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "ignoreSSL": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "status": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "outages": {
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "downtime": {
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "upTime": {
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "avgResponseTime": {
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "totalPings": {
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "history": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "date"
+                      }
+                    },
+                    "availability": {
+                      "type": "integer",
+                      "default": "25%"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User Not Found"
+          }
+        }
+      }
+    },
+    "/Add": {
+      "post": {
+        "tags": [
+          "URLMangement"
+        ],
+        "description": "Add a url check by name",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "protocol": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "integer"
+                  },
+                  "timeout": {
+                    "type": "integer",
+                    "default": 5
+                  },
+                  "interval": {
+                    "type": "integer",
+                    "default": 10
+                  },
+                  "threshold": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "authentication": {
+                    "type": "object",
+                    "properties": {
+                      "username": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "httpHeaders": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "assert": {
+                    "type": "object",
+                    "properties": {
+                      "statusCode": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "ignoreSSL": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "authtoken",
+            "in": "header",
+            "description": "auth token that the user got from login post request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "URL Check Added successfully"
+          },
+          "422": {
+            "description": "There is a check with the same name for this user"
+          }
+        }
+      }
+    },
+    "/Update": {
+      "put": {
+        "tags": [
+          "URLMangement"
+        ],
+        "description": "Update a checkUrl by name in body,headers and tags are added to old ones",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "protocol": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "integer"
+                  },
+                  "timeout": {
+                    "type": "integer",
+                    "default": 5
+                  },
+                  "interval": {
+                    "type": "integer",
+                    "default": 10
+                  },
+                  "threshold": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "authentication": {
+                    "type": "object",
+                    "properties": {
+                      "username": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "httpHeaders": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "assert": {
+                    "type": "object",
+                    "properties": {
+                      "statusCode": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "ignoreSSL": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "authtoken",
+            "in": "header",
+            "description": "auth token that the user got from login post request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "URL Check Updated successfully"
+          },
+          "422": {
+            "description": "Url Check doesn't exist"
+          }
+        }
+      }
+    },
+    "/Delete/{checkName}": {
+      "delete": {
+        "tags": [
+          "URLMangement"
+        ],
+        "description": "Delete a checkUrl by name in body and remove its tags if its tags were only containing them.",
+        "parameters": [
+          {
+            "name": "checkName",
+            "in": "path",
+            "description": "Check Url Name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authtoken",
+            "in": "header",
+            "description": "auth token that the user got from login post request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          },
+          "404": {
+            "description": "There is no check with that name , Create new one first"
+          }
+        }
+      }
+    },
+    "/GetURLDetailsByTag/{tagName}": {
+      "get": {
+        "tags": [
+          "URLMangement"
+        ],
+        "summary": "Get URL Data and monitoring results",
+        "parameters": [
+          {
+            "name": "tagName",
+            "in": "path",
+            "description": "Check Url Name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authtoken",
+            "in": "header",
+            "description": "auth token that the user got from login post request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "protocol": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "port": {
+                        "type": "integer"
+                      },
+                      "timeout": {
+                        "type": "integer",
+                        "default": 5
+                      },
+                      "interval": {
+                        "type": "integer",
+                        "default": 10
+                      },
+                      "threshold": {
+                        "type": "integer",
+                        "default": 1
+                      },
+                      "authentication": {
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "password": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "httpHeaders": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "assert": {
+                        "type": "object",
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "ignoreSSL": {
+                        "type": "boolean",
+                        "default": false
+                      },
+                      "status": {
+                        "type": "boolean",
+                        "default": true
+                      },
+                      "outages": {
+                        "type": "integer",
+                        "default": 0
+                      },
+                      "downtime": {
+                        "type": "integer",
+                        "default": 0
+                      },
+                      "upTime": {
+                        "type": "integer",
+                        "default": 0
+                      },
+                      "avgResponseTime": {
+                        "type": "integer",
+                        "default": 0
+                      },
+                      "totalPings": {
+                        "type": "integer",
+                        "default": 0
+                      },
+                      "history": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "format": "date"
+                        }
+                      },
+                      "availability": {
+                        "type": "integer",
+                        "default": "25%"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User Not Found"
+          }
+        }
+      }
+    },
+    "/AddTagsWithCheckNames": {
+      "post": {
+        "tags": [
+          "URLMangement"
+        ],
+        "description": "Add a list of tags with their check names - check names should exist for this user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "default": "tagName"
+                    },
+                    "checks": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "default": "tag"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "authtoken",
+            "in": "header",
+            "description": "auth token that the user got from login post request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved Successfully"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "user": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "default": "a@b.com"
+          },
+          "password": {
+            "type": "string",
+            "default": "12345678",
+            "minLength": 8
+          },
+          "verified": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "urlCheck": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "protocol": {
+            "type": "string",
+            "enum": [
+              "HTTP",
+              "HTTPS",
+              "TCP"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "timeout": {
+            "type": "integer",
+            "default": 5
+          },
+          "interval": {
+            "type": "integer",
+            "default": 10
+          },
+          "threshold": {
+            "type": "integer",
+            "default": 1
+          },
+          "authentication": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string"
+              }
+            }
+          },
+          "httpHeaders": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "assert": {
+            "type": "object",
+            "properties": {
+              "statusCode": {
+                "type": "integer"
+              }
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {}
+          },
+          "ignoreSSL": {
+            "type": "boolean",
+            "default": false
+          },
+          "status": {
+            "type": "boolean",
+            "default": true
+          },
+          "outages": {
+            "type": "integer",
+            "default": 0
+          },
+          "downtime": {
+            "type": "integer",
+            "default": 0
+          },
+          "upTime": {
+            "type": "integer",
+            "default": 0
+          },
+          "avgResponseTime": {
+            "type": "integer",
+            "default": 0
+          },
+          "totalPings": {
+            "type": "integer",
+            "default": 0
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "availability": {
+            "type": "integer",
+            "default": "25%"
+          }
+        }
+      },
+      "tag": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "General"
+          },
+          "user": {
+            "type": "string",
+            "description": "Foreign key for user",
+            "example": "6458bba51d7c5b14cecef5a6"
+          },
+          "urlChecks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Foreign key for urlCheck",
+              "example": "6458bba51d7c5b14cecef5a6"
+            }
+          }
+        }
+      }
+    }
+  }
+}

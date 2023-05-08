@@ -1,9 +1,8 @@
-const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
+import * as jwt from "jsonwebtoken";
+import mongoose from 'mongoose';
 const User = mongoose.model("User");
 
 const authenticate = (req, res, next) => {
-
     const token = req.headers.authtoken;
 
     // check if  token exists
@@ -24,6 +23,6 @@ const authenticate = (req, res, next) => {
        
       });
   };
-  module.exports={
+export{
     authenticate
   }

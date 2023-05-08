@@ -1,15 +1,20 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 const User = mongoose.model("User");
 const Tag = mongoose.model("Tag");
 const UrlCheck = mongoose.model("UrlCheck");
-const { addOrUpdateTag ,deleteUrlinTags,deleteEmptyTags} = require("./Helpers/DatabaseHelper.js");
-const { validateUrlCheck } = require("./Helpers/Validation.js");
+import { addOrUpdateTag ,deleteUrlinTags,deleteEmptyTags} from "./Helpers/DatabaseHelper.js";
+import { validateUrlCheck } from "./Helpers/Validation.js";
+import {makeARequest} from"../URLMonitoring.js";
 async function  getURLDetails(req,res){
     const checkName= req.params.checkName;
     const userId=res.locals.userId ;
     const savedUrl=await UrlCheck.findOne({name: checkName,user: userId});
+    if(savedUrl==null)     return res.status(404).json("User Not Found");
+    savedUrl._id=undefined;
     savedUrl.user= undefined;
     savedUrl.__v= undefined;
+    savedUrl.lastTimeStampMs=undefined;
+    savedUrl.availability=(savedUrl.upTime/(savedUrl.downtime+savedUrl.upTime)) * 100 +"%";
     return res.status(200).json(savedUrl);
 }
 
@@ -42,7 +47,7 @@ async function  addURLCheck(req,res){
         currentTag.urlChecks.push(newurlcheck._id);
         currentTag.save();
     }
-
+    makeARequest(urlCheck);
     return res.status(200).json("URL Check Added successfully");
 }
 
@@ -103,6 +108,7 @@ async function deleteURLCheck(req,res){
     const checkName= req.params.checkName;
     const userId=res.locals.userId ;
     const URL=await UrlCheck.findOne({ name: checkName,user:userId });
+    if (UrlCheck==null) return res.status(404).json({error: "There is no check with that name , Create new one first"});
     const urlId=URL._id;
     const tags=URL.tags;
     await deleteUrlinTags(tags,urlId,userId);
@@ -144,14 +150,17 @@ async function getURLDetailsByTag(req,res){
     const tagName= req.params.tagName;
     const userId=res.locals.userId ;
     const tag = await Tag.findOne({name: tagName,user: userId}).populate('urlChecks');
+    if(tag==null)     return res.status(404).json("tag Not found");
     tag.urlChecks.forEach(check=>{
+        check._id=undefined;
         check.user=undefined;
         check.__v=undefined;
-        check._id=undefined;
+        check.lastTimeStampMs=undefined;
+        check.availability=(check.upTime/(check.downtime+check.upTime)) * 100 +"%";
     });
     return res.status(200).json(tag.urlChecks);
 }
 
-module.exports ={
+export {
     getURLDetails,addURLCheck,updateURLCheck,deleteURLCheck,addTagsWithCheckNames,getURLDetailsByTag
 }

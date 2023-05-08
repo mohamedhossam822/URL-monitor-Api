@@ -1,13 +1,13 @@
-const express = require("express");
+import express from 'express';
 const router = express.Router();
-const URLMangementController = require('../Controllers/URLMangementController');
-const { authenticate } = require('../Middlewares/AuthMiddleware');
-router.get("/GetURLDetails/:checkName",authenticate,URLMangementController.getURLDetails);
-router.post("/Add",authenticate,URLMangementController.addURLCheck);
-router.put("/Update/",authenticate,URLMangementController.updateURLCheck)
-router.delete("/Delete/:checkName",authenticate,URLMangementController.deleteURLCheck)
+import * as URLMangementController from '../Controllers/URLMangementController.js';
+import * as AuthMiddleware  from '../Middlewares/AuthMiddleware.js';
+router.get("/GetURLDetails/:checkName",AuthMiddleware.authenticate,URLMangementController.getURLDetails);
+router.post("/Add",AuthMiddleware.authenticate,URLMangementController.addURLCheck);
+router.put("/Update",AuthMiddleware.authenticate,URLMangementController.updateURLCheck)
+router.delete("/Delete/:checkName",AuthMiddleware.authenticate,URLMangementController.deleteURLCheck)
 
-router.get("/GetURLDetailsByTag/:tagName",authenticate,URLMangementController.getURLDetailsByTag);
-router.post("/AddTagsWithCheckNames",authenticate,URLMangementController.addTagsWithCheckNames);
+router.get("/GetURLDetailsByTag/:tagName",AuthMiddleware.authenticate,URLMangementController.getURLDetailsByTag);
+router.post("/AddTagsWithCheckNames",AuthMiddleware.authenticate,URLMangementController.addTagsWithCheckNames);
 
-module.exports = router;
+export {router};

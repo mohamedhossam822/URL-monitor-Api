@@ -1,11 +1,12 @@
-const mongoose = require("mongoose");
-const validator = require("email-validator");
-const jwt = require("jsonwebtoken");
+import mongoose from "mongoose";
+import * as validator from"email-validator";
+import pkg from 'jsonwebtoken';
+const {sign} = pkg;
 const User = mongoose.model("User");
-const { sendMail }=require("./Helpers/SendingEmail.js");
+import { sendMail } from "./Helpers/SendingEmail.js";
 
 
-const maxAge = 24 * 60 * 60; //hours*min*secs //1 Day
+const maxAge = 3*24 * 60 * 60; //hours*min*secs //3 Day
   /*************************
    *********LoginPost*******
    *************************/
@@ -31,10 +32,10 @@ const maxAge = 24 * 60 * 60; //hours*min*secs //1 Day
           });
       }
       if(!User.verified){
-        fullUrl = req.protocol + '://' + req.get('host')+'/VerifyUser/'+User._id;
+        const fullUrl = req.protocol + '://' + req.get('host')+'/VerifyUser/'+User._id;
         sendMail(User.email,fullUrl)
         return res.status(423).json({
-            message: "Please Verify your email, A email will be sent"
+            message: "Please Verify your email"
           });
         }
         
@@ -93,7 +94,7 @@ const maxAge = 24 * 60 * 60; //hours*min*secs //1 Day
           .save()
           .then((user) => {
             //Send email
-            fullUrl = req.protocol + '://' + req.get('host')+'/VerifyUser/'+user._id;
+            const fullUrl = req.protocol + '://' + req.get('host')+'/VerifyUser/'+user._id;
             sendMail(user.email,fullUrl)
             
             res.status(201).json({
@@ -110,12 +111,12 @@ const maxAge = 24 * 60 * 60; //hours*min*secs //1 Day
 
   /**Create Token**/
   function createToken(id) {
-    return jwt.sign({ id }, process.env.SECRET, {
+    return sign({ id }, process.env.SECRET, {
       expiresIn: maxAge,
     });
   }
 
 
-  module.exports = {
+  export  {
     LoginPost, SignupPost
 };
