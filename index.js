@@ -45,7 +45,7 @@ mongoose.connection.on("error", (err) => {
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //Start monitoring URLS
-app.use('/startMonitor'(async ()=>{
+app.use('/startMonitor',(async ()=>{
   //Start Monitoring the existing URL checks in the database
   const UrlCheck = mongoose.model("UrlCheck");
   const savedUrls= await UrlCheck.find({});
