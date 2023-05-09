@@ -44,14 +44,16 @@ mongoose.connection.on("error", (err) => {
 //Swagger support open GET / route tosee documentation
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.listen(port, async () => {
-  console.log(`URL Monitor app listening on port ${port}`)
-
+//Start monitoring URLS
+app.use('/startMonitor'(async ()=>{
   //Start Monitoring the existing URL checks in the database
   const UrlCheck = mongoose.model("UrlCheck");
   const savedUrls= await UrlCheck.find({});
   for(let i=0;i<savedUrls.length;i++){
     makeARequest(savedUrls[i]);
   }
+}));
 
+app.listen(port, async () => {
+  console.log(`URL Monitor app listening on port ${port}`);
 })
