@@ -2,7 +2,8 @@ import dotenv from 'dotenv'
 import express from 'express';
 import mongoose from 'mongoose';
 import swaggerUi from "swagger-ui-express";
-import swaggerDocument from "./Swagger/swagger.json" assert { type: "json" };
+import { readFileSync } from "fs";
+const swaggerDocument = JSON.parse(readFileSync("./Swagger/swagger.json"));
 
 dotenv.config()
 process.env.UV_THREADPOOL_SIZE = 128;
