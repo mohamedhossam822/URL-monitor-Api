@@ -14,16 +14,20 @@ import * as fs from 'fs';
         pass: process.env.SENDERPASS, 
       },
     });
+    //read html file to send
     readHTMLFile('./HTMLFiles/VerifyEmailTemplate.html', function(err, html) {
         if (err) {
            console.log('error reading file', err);
            return;
         }
+        //replace variables in html -> link of verification
         var template = compile(html);
         var replacements = {
              link: fullUrl
         };
         var htmlToSend = template(replacements);
+
+        //Add options of the pending email
         var mailOptions = {
             from: process.env.SENDEREMAIL, // sender address
             to: email, // list of receivers
@@ -31,6 +35,8 @@ import * as fs from 'fs';
             text: "Confirm your email", 
             html : htmlToSend
          };
+
+         //Send email
         transporter.sendMail(mailOptions, function (error, response) {
             if (error) {
                 console.log(error);
@@ -39,6 +45,7 @@ import * as fs from 'fs';
     });
 
   }
+  //Send email to users notifying them about the change in status of one of their URLS
   async function  sendNotification(email,status,urlCheckName,constructedURL){
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
@@ -48,15 +55,18 @@ import * as fs from 'fs';
         pass: process.env.SENDERPASS, 
       },
     });
+    //Set up variables for html file to be sent based on status of URL
     let fileLink="Red";
     console.log(status);
     if(status) fileLink="Green";
     console.log(fileLink);
+
     await readHTMLFile('./HTMLFiles/UrlStatus'+fileLink+'.html', async function(err, html) {
         if (err) {
            console.log('error reading file', err);
            return;
         }
+                //replace variables in html -> link of verification
         const curStatus = status ? "up" : "down"
         console.log(curStatus);
         var template = compile(html);
@@ -66,6 +76,7 @@ import * as fs from 'fs';
           url: constructedURL,
         };
         var htmlToSend = template(replacements);
+        //Add options of the pending email
         var mailOptions = {
           from: process.env.SENDEREMAIL, // sender address
           to: email, // list of receivers
@@ -73,6 +84,7 @@ import * as fs from 'fs';
           text: "Your Url '"+constructedURL+ "' Went"+status
           , html : htmlToSend
        };
+       //Send email
       await transporter.sendMail(mailOptions, function (error, response) {
           if (error) {
               console.log(error);

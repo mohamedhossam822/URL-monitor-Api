@@ -26,22 +26,25 @@ const maxAge = 3*24 * 60 * 60; //hours*min*secs //3 Day
       email: email,
       password: password,
     }).then((User) => {
+      //Invalid credentials
       if(User==null){
           return res.status(422).json({
           error: "Email or password are invalid!",
           });
       }
+      //User didn't verify his account
       if(!User.verified){
         const fullUrl = req.protocol + '://' + req.get('host')+'/VerifyUser/'+User._id;
+        //Send email to the user to verify their account
         sendMail(User.email,fullUrl)
         return res.status(423).json({
-            message: "Please Verify your email"
+            message: "Please Verify your email, A new email will be sent!"
           });
         }
-        
+        //Create token string and send it to the user
         const token = createToken(User._id);
             return res.status(200).json({
-            message: "Logged in successfully!",
+            message: "Logged in successfully!, Include this token in all of your requests made to the API in authtoken Header",
             token: token
             });
         });
@@ -86,17 +89,16 @@ const maxAge = 3*24 * 60 * 60; //hours*min*secs //3 Day
   
         //Leave Hashing for now
         //bcrypt.hash(password, 12).then((hashedpassword) => {});
-        //Create new patient
+        //Create new user
         const user = new User(newUser);
   
-        //Save patient to database
+        //Save user to database
         user
           .save()
           .then((user) => {
-            //Send email
+            //Send email for the user to verify their account
             const fullUrl = req.protocol + '://' + req.get('host')+'/VerifyUser/'+user._id;
-            sendMail(user.email,fullUrl)
-            
+            sendMail(user.email,fullUrl);
             res.status(201).json({
               message: "Saved Successfully, Please Verify your email",
             });

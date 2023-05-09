@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 const UrlCheck = mongoose.model("UrlCheck");
 
+//URL Info Validation
 function validateUrlCheck(urlCheck,isNew){
-    //nameValidation
+
     if(isNew && urlCheck.name==null) return "A name is required for URL Check";
     if(isNew && urlCheck.url==null) return "A url is required for URL Check";
     if(isNew && urlCheck.protocol==null) return "A protocol is required for URL Check";

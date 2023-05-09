@@ -2,6 +2,7 @@ import express from 'express';
 const router = express.Router();
 import * as URLMangementController from '../Controllers/URLMangementController.js';
 import * as AuthMiddleware  from '../Middlewares/AuthMiddleware.js';
+
 router.get("/GetURLDetails/:checkName",AuthMiddleware.authenticate,URLMangementController.getURLDetails);
 router.post("/Add",AuthMiddleware.authenticate,URLMangementController.addURLCheck);
 router.put("/Update",AuthMiddleware.authenticate,URLMangementController.updateURLCheck)
