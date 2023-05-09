@@ -31,5 +31,5 @@ npm run test
 - Navigate to `http://localhost:3000`
 
 # API Documentation
-  After running the project navigate to  http://localhost:3000/ for a swagger-ui detailing how to use every route.<br>
+  After running the project navigate to  http://localhost:3000/ for a swagger-ui detailling how to use every route.<br>
 Also Find the swagger json file in the Swagger folder /swagger.json
